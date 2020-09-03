@@ -12,15 +12,15 @@ class Ahli_Waris {
             this.cucu_perempuan = ccPr,
             this.ayah = ayah,
             this.kakek = kakek,
-            this.saudara_saudari_seibu = sdrSeibu,
+            this.saudara_saudari_tiri_seibu = sdrSeibu,
             this.saudara_kandung = sdrKandung,
-            this.saudara_seayah = sdrSeayah,
+            this.saudara_tiri_seayah = sdrSeayah,
             this.anak_laki_laki_saudara_kandung = anLkSdrKandung,
-            this.anak_laki_laki_saudara_seayah = anLkSdrSeayah,
+            this.anak_laki_laki_saudara_tiri_seayah = anLkSdrSeayah,
             this.saudara_kandung_ayah = sdrKandungAyah,
-            this.saudara_seayah_ayah = sdrSeayahAyah,
+            this.saudara_tiri_seayah_ayah = sdrSeayahAyah,
             this.anak_laki_laki_saudara_kandung_ayah = ankLkSdrKandungAyah,
-            this.anak_laki_laki_saudara_seayah_ayah = ankLkSdrSeayahAyah,
+            this.anak_laki_laki_saudara_tiri_seayah_ayah = ankLkSdrSeayahAyah,
             this.saudari_kandung = sdriKandung,
             this.saudari_seayah = sdriSeayah,
             this.ibu = ibu,
@@ -40,15 +40,15 @@ class Ahli_Waris {
             cucu_perempuan,
             ayah,
             kakek,
-            saudara_saudari_seibu,
+            saudara_saudari_tiri_seibu,
             saudara_kandung,
-            saudara_seayah,
+            saudara_tiri_seayah,
             anak_laki_laki_saudara_kandung,
-            anak_laki_laki_saudara_seayah,
+            anak_laki_laki_saudara_tiri_seayah,
             saudara_kandung_ayah,
-            saudara_seayah_ayah,
+            saudara_tiri_seayah_ayah,
             anak_laki_laki_saudara_kandung_ayah,
-            anak_laki_laki_saudara_seayah_ayah,
+            anak_laki_laki_saudara_tiri_seayah_ayah,
             saudari_kandung,
             saudari_seayah,
             ibu,
@@ -77,10 +77,33 @@ class Ahli_Waris {
         else if (anak_perempuan > 0 || cucu_perempuan > 0) {
             const kandidatAhliWaris = {
                 anak_perempuan, cucu_perempuan, ayah, kakek, suami, istri, ibu, nenek, ibu_kakek, saudara_kandung,
-                saudari_kandung, saudara_seayah, saudari_seayah, anak_laki_laki_saudara_kandung, anak_laki_laki_saudara_seayah,
-                saudara_kandung_ayah, saudara_seayah_ayah, anak_laki_laki_saudara_kandung_ayah, anak_laki_laki_saudara_seayah_ayah
+                saudari_kandung, saudara_tiri_seayah, saudari_seayah, anak_laki_laki_saudara_kandung, anak_laki_laki_saudara_tiri_seayah,
+                saudara_kandung_ayah, saudara_tiri_seayah_ayah, anak_laki_laki_saudara_kandung_ayah, anak_laki_laki_saudara_tiri_seayah_ayah
             };
             return this.haveDaughterAndGrand(kandidatAhliWaris, body.total_harta);
+        }
+        //jika punya ayah atau kakek
+        else if (ayah > 0 || kakek > 0) {
+            const kandidatAhliWaris = {
+                ayah, kakek, ibu, nenek, ibu_kakek, suami, istri
+            };
+            return this.haveFatherAndGrand(kandidatAhliWaris, body.total_harta);
+        }
+        // jika punya saudara kandung atau saudara seayah
+        else if (saudara_kandung > 0 || saudara_tiri_seayah) {
+            const kandidatAhliWaris = {
+                saudara_saudari_tiri_seibu, saudara_kandung, saudari_kandung, saudara_tiri_seayah, saudari_seayah, suami, istri, ibu, nenek, ibu_kakek
+            };
+            return this.haveSiblings(kandidatAhliWaris, body.total_harta);
+        }
+        // Ahli waris lain
+        else {    
+            const kandidatAhliWaris = {
+                anak_laki_laki_saudara_kandung, anak_laki_laki_saudara_tiri_seayah, saudara_kandung_ayah, saudara_tiri_seayah_ayah,
+                anak_laki_laki_saudara_kandung_ayah, anak_laki_laki_saudara_tiri_seayah_ayah, saudari_kandung, saudari_seayah,
+                suami, istri, ibu, nenek, ibu_kakek, saudara_saudari_tiri_seibu, pria_wanita_yang_memerdekakan_budak
+            };
+            return this.haveAnother(kandidatAhliWaris, body.total_harta);
         }
     }
 
@@ -124,7 +147,7 @@ class Ahli_Waris {
             }
         }
 
-        pembilangSementara = kpk(findKPK, pembilangSementara);
+        if (findKPK.length > 0) pembilangSementara = kpk(findKPK, pembilangSementara);
 
         if (aK) {
             aK[0] = pembilangSementara / +aK[1] * aK[0];
@@ -163,6 +186,8 @@ class Ahli_Waris {
 
         let lastFunds = (pembilang - penyebut) * funds / pembilang;
         let sisaPenyebut = pembilang - penyebut;
+        console.log('pembilang >> ', pembilang);
+        console.log('sampai disini');
 
         if (anak_perempuan > 0) {
             result.unshift(new Beneficiary('anak_perempuan', '1/2 bagian anak laki-laki', anak_perempuan));
@@ -233,7 +258,7 @@ class Ahli_Waris {
             }
         }
 
-        pembilangSementara = kpk(findKPK, pembilangSementara);
+        if (findKPK.length > 0) pembilangSementara = kpk(findKPK, pembilangSementara);
 
         if (aP) {
             aP[0] = pembilangSementara / +aP[1] * aP[0];
@@ -311,8 +336,8 @@ class Ahli_Waris {
     static haveDaughterAndGrand(body, funds) {
         const {
             anak_perempuan, cucu_perempuan, ayah, kakek, suami, istri, ibu, nenek, ibu_kakek, saudara_kandung,
-            saudari_kandung, saudara_seayah, saudari_seayah, anak_laki_laki_saudara_kandung, anak_laki_laki_saudara_seayah,
-            saudara_kandung_ayah, saudara_seayah_ayah, anak_laki_laki_saudara_kandung_ayah, anak_laki_laki_saudara_seayah_ayah
+            saudari_kandung, saudara_tiri_seayah, saudari_seayah, anak_laki_laki_saudara_kandung, anak_laki_laki_saudara_tiri_seayah,
+            saudara_kandung_ayah, saudara_tiri_seayah_ayah, anak_laki_laki_saudara_kandung_ayah, anak_laki_laki_saudara_tiri_seayah_ayah
         } = body;
         let result = [];
 
@@ -340,20 +365,20 @@ class Ahli_Waris {
         else if (saudari_kandung > 0) {
             result.push(new Beneficiary('saudari_kandung', 'sisa pembagian seluruh harta', saudari_kandung));
         }
-        else if (saudara_seayah > 0) {
+        else if (saudara_tiri_seayah > 0) {
             if (saudari_seayah > 0) {
-                result.push(new Beneficiary('saudara_seayah', '2 kali lipat saudari seayah', saudara_seayah));
+                result.push(new Beneficiary('saudara_tiri_seayah', '2 kali lipat saudari seayah', saudara_tiri_seayah));
                 result.push(new Beneficiary('saudari_seayah', 'setengah bagian saudara seayah', saudari_seayah));
             }
-            else result.push(new Beneficiary('saudara_seayah', 'sisa pembagian seluruh harta', saudara_seayah));
+            else result.push(new Beneficiary('saudara_tiri_seayah', 'sisa pembagian seluruh harta', saudara_tiri_seayah));
         }
         else if (saudari_seayah > 0) result.push(new Beneficiary('saudari_seayah', 'sisa pembagian seluruh harta', saudari_seayah));
         else if (anak_laki_laki_saudara_kandung > 0) result.push(new Beneficiary('anak_laki_laki_saudara_kandung', 'sisa pembagian seluruh harta', anak_laki_laki_saudara_kandung));
-        else if (anak_laki_laki_saudara_seayah > 0) result.push(new Beneficiary('anak_laki_laki_saudara_seayah', 'sisa pembagian seluruh harta', anak_laki_laki_saudara_seayah));
+        else if (anak_laki_laki_saudara_tiri_seayah > 0) result.push(new Beneficiary('anak_laki_laki_saudara_tiri_seayah', 'sisa pembagian seluruh harta', anak_laki_laki_saudara_tiri_seayah));
         else if (saudara_kandung_ayah > 0) result.push(new Beneficiary('saudara_kandung_ayah', 'sisa pembagian seluruh harta', saudara_kandung_ayah));
-        else if (saudara_seayah_ayah > 0) result.push(new Beneficiary('saudara_seayah_ayah', 'sisa pembagian seluruh harta', saudara_seayah_ayah));
+        else if (saudara_tiri_seayah_ayah > 0) result.push(new Beneficiary('saudara_tiri_seayah_ayah', 'sisa pembagian seluruh harta', saudara_tiri_seayah_ayah));
         else if (anak_laki_laki_saudara_kandung_ayah > 0) result.push(new Beneficiary('anak_laki_laki_saudara_kandung_ayah', 'sisa pembagian seluruh harta', anak_laki_laki_saudara_kandung_ayah));
-        else if (anak_laki_laki_saudara_seayah_ayah > 0) result.push(new Beneficiary('anak_laki_laki_saudara_seayah_ayah', 'sisa pembagian seluruh harta', anak_laki_laki_saudara_seayah_ayah));
+        else if (anak_laki_laki_saudara_tiri_seayah_ayah > 0) result.push(new Beneficiary('anak_laki_laki_saudara_tiri_seayah_ayah', 'sisa pembagian seluruh harta', anak_laki_laki_saudara_tiri_seayah_ayah));
         else result.push(new Beneficiary('dzawil_arhaam', 'sisa pembagian seluruh harta', 1));
 
         if (suami > 0) result.push(new Beneficiary('suami', '1/4', 1));
@@ -395,7 +420,7 @@ class Ahli_Waris {
             }
         }
 
-        pembilangSementara = kpk(findKPK, pembilangSementara);
+        if (findKPK.length > 0) pembilangSementara = kpk(findKPK, pembilangSementara);
 
         if (aP) {
             aP[0] = pembilangSementara / +aP[1] * aP[0];
@@ -464,7 +489,7 @@ class Ahli_Waris {
             result[index].bagian_terhitung += ` + sisa ${sisaPenyebut}/${pembilang}`;
             result[index].updateFunds(result[index].dana_didapat + lastFunds);
         }
-        else if (name === 'saudara_kandung' || name === 'saudari_kadung' || name === 'saudara_seayah' || name === 'saudari_seayah') {
+        else if (name === 'saudara_kandung' || name === 'saudari_kandung' || name === 'saudara_tiri_seayah' || name === 'saudari_seayah') {
             if (saudara_kandung > 0) {
                 if (saudari_kandung > 0) {
                     let pembilangBaru = (saudara_kandung * 2) + saudari_kandung;
@@ -482,11 +507,11 @@ class Ahli_Waris {
                 result[index].updateCountPart(`${sisaPenyebut}/${pembilang}`);
                 result[index].updateFunds(lastFunds);
             }
-            else if (saudara_seayah > 0) {
+            else if (saudara_tiri_seayah > 0) {
                 if (saudari_seayah > 0) {
-                    let pembilangBaru = (saudara_seayah * 2) + saudari_seayah;
-                    result[dataIndex(['saudara_seayah'], 'nama', result)].updateCountPart(`${saudara_seayah * 2}/${pembilangBaru} dari sisa ${sisaPenyebut}/${pembilang}`);
-                    result[dataIndex(['saudara_seayah'], 'nama', result)].updateFunds((saudara_seayah * 2) * lastFunds / pembilangBaru);
+                    let pembilangBaru = (saudara_tiri_seayah * 2) + saudari_seayah;
+                    result[dataIndex(['saudara_tiri_seayah'], 'nama', result)].updateCountPart(`${saudara_tiri_seayah * 2}/${pembilangBaru} dari sisa ${sisaPenyebut}/${pembilang}`);
+                    result[dataIndex(['saudara_tiri_seayah'], 'nama', result)].updateFunds((saudara_tiri_seayah * 2) * lastFunds / pembilangBaru);
                     result[dataIndex(['saudari_seayah'], 'nama', result)].updateCountPart(`${saudari_seayah}/${pembilangBaru} dari sisa ${sisaPenyebut}/${pembilang}`);
                     result[dataIndex(['saudari_seayah'], 'nama', result)].updateFunds(saudari_seayah * lastFunds / pembilangBaru);
                 }
@@ -508,7 +533,344 @@ class Ahli_Waris {
         return result;
     }
 
+    // =======================================
+    //       JIKA PUNYA AYAH ATAU KAKEK
+    // =======================================
+    static haveFatherAndGrand(body, funds) {
+        const {
+            ayah, kakek, ibu, nenek, ibu_kakek, suami, istri
+        } = body;
+        let result = [];
+        if (suami > 0 || istri > 0) {
+            if (suami > 0) result.push(new Beneficiary('suami', '1/2', 1));
+            else if (istri > 0) result.push(new Beneficiary('istri', '1/4', istri));
+            result.push(new Beneficiary('ibu', '1/3 dari sisa pembagian seluruh harta', 1));
+        }
+        else if (ibu > 0) result.push(new Beneficiary('ibu', '1/3', 1));
 
+        if (ibu < 1) {
+            if (nenek > 0) result.push(new Beneficiary('nenek', '1/6', 1));
+            else if (ibu_kakek > 0) result.push(new Beneficiary('ibu_kakek', '1/6', 1));
+        }
+
+
+        let sI, iN;
+        let penyebut = 0;
+        let pembilangSementara = 1;
+        let findKPK = [];
+        for (let i in result) {
+            if (result[i].nama === 'suami' || result[i].nama === 'istri') {
+                sI = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+sI[1]);
+                pembilangSementara *= +sI[1];
+            }
+            else if ((result[i].nama === 'ibu' && result[i].bagian_didapat === '1/3') || result[i].nama === 'nenek' || result[i].nama === 'ibu_kakek') {
+                iN = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+iN[1]);
+                pembilangSementara *= +iN[1];
+            }
+        }
+
+        if (findKPK.length > 0) pembilangSementara = kpk(findKPK, pembilangSementara);
+
+        if (sI) {
+            sI[0] = pembilangSementara / +sI[1] * sI[0];
+            penyebut += sI[0];
+        }
+        if (iN) {
+            iN[0] = pembilangSementara / +iN[1] * iN[0];
+            penyebut += iN[0];
+        }
+
+        let pembilang;
+
+        penyebut > pembilangSementara ? pembilang = penyebut : pembilang = pembilangSementara;
+
+        console.log('penyebut >> ', penyebut);
+        console.log('pembilang sementara >> ', pembilangSementara);
+        console.log('pembilang >> ', pembilang);
+
+        if (sI) {
+            sI[1] = pembilang;
+            result[dataIndex(['suami', 'istri'], 'nama', result)].bagian_terhitung = sI.join('/');
+            result[dataIndex(['suami', 'istri'], 'nama', result)].updateFunds(sI[0] * funds / pembilang);
+        }
+        if (iN) {
+            iN[1] = pembilang;
+            result[dataIndex(['ibu', 'nenek', 'ibu_kakek'], 'nama', result)].bagian_terhitung = iN.join('/');
+            result[dataIndex(['ibu', 'nenek', 'ibu_kakek'], 'nama', result)].updateFunds(iN[0] * funds / pembilang);
+        }
+
+        let sisaPenyebut = pembilang - penyebut;
+        let lastFunds = sisaPenyebut * funds / pembilang;
+        let name, text = '';
+        if (ibu > 0 && result[dataIndex(['ibu'], 'nama', result)].bagian_didapat !== '1/3') {
+            result[dataIndex(['ibu'], 'nama', result)].updateCountPart(`1/3 dari ${sisaPenyebut}/${pembilang}`);
+            result[dataIndex(['ibu'], 'nama', result)].updateFunds(lastFunds / 3);
+            lastFunds -= lastFunds / 3;
+            text = ' - 1/3 bagian ibu';
+        }
+        if (ayah > 0) name = 'ayah';
+        else name = 'kakek';
+        result.unshift(new Beneficiary(name, 'Sisa pembagian seluruh harta', 1));
+        result[dataIndex([name], 'nama', result)].updateCountPart(`${sisaPenyebut}/${pembilang}${text}`);
+        result[dataIndex([name], 'nama', result)].updateFunds(lastFunds);
+
+        return result;
+    }
+
+    // ================================================
+    //  JIKA PUNYA SAUDARA KANDUNG ATAU SAUDARA SEAYAH
+    // ================================================
+    static haveSiblings(body, funds) {
+        const {
+            saudara_saudari_tiri_seibu, saudara_kandung, saudari_kandung, saudara_tiri_seayah, saudari_seayah, suami, istri, ibu, nenek, ibu_kakek
+        } = body;
+        let result = [];
+
+        if (saudara_saudari_tiri_seibu > 0) {
+            if (saudara_saudari_tiri_seibu > 1) result.push(new Beneficiary('saudara_saudari_tiri_seibu', '1/3', saudara_saudari_tiri_seibu));
+            else result.push(new Beneficiary('saudara_saudari_tiri_seibu', '1/6', saudara_saudari_tiri_seibu))
+        }
+
+        if (suami > 0) result.push(new Beneficiary('suami', '1/2', 1));
+        else if (istri > 0) result.push(new Beneficiary('istri', '1/4', istri));
+
+        if (ibu > 0) result.push(new Beneficiary('ibu', '1/6', 1));
+        else if (nenek > 0) result.push(new Beneficiary('nenek', '1/6', 1));
+        else if (ibu_kakek > 0) result.push(new Beneficiary('ibu_kakek', '1/6', 1));
+
+        if (saudara_kandung < 1 && saudari_kandung > 0) {
+            if (saudari_kandung > 1) result.push(new Beneficiary('saudari_kandung', '2/3', saudari_kandung));
+            else result.push(new Beneficiary('saudari_kandung', '1/2', 1))
+        }
+
+        let ssI, sI, iN, sK;
+        let penyebut = 0;
+        let pembilangSementara = 1;
+        let findKPK = [];
+        for (let i in result) {
+            if (result[i].nama === 'saudara_saudari_tiri_seibu') {
+                ssI = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+ssI[1]);
+                pembilangSementara *= +ssI[1];
+            }
+            else if (result[i].nama === 'suami' || result[i].nama === 'istri') {
+                sI = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+sI[1]);
+                pembilangSementara *= +sI[1];
+            }
+            else if (result[i].nama === 'ibu' || result[i].nama === 'nenek' || result[i].nama === 'ibu_kakek') {
+                iN = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+iN[1]);
+                pembilangSementara *= +iN[1];
+            }
+            else if (result[i].nama === 'saudari_kandung') {
+                sK = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+sK[1]);
+                pembilangSementara *= +sK[1];
+            }
+        }
+
+        if (findKPK.length > 0) pembilangSementara = kpk(findKPK, pembilangSementara);
+
+        if (ssI) {
+            ssI[0] = pembilangSementara / +ssI[1] * ssI[0];
+            penyebut += ssI[0];
+        }
+        if (sI) {
+            sI[0] = pembilangSementara / +sI[1] * sI[0];
+            penyebut += sI[0];
+        }
+        if (iN) {
+            iN[0] = pembilangSementara / +iN[1] * iN[0];
+            penyebut += iN[0];
+        }
+        if (sK) {
+            sK[0] = pembilangSementara / +sK[1] * sK[0];
+            penyebut += sK[0];
+        }
+
+        let pembilang;
+
+        penyebut > pembilangSementara ? pembilang = penyebut : pembilang = pembilangSementara;
+
+        console.log('penyebut >> ', penyebut);
+        console.log('pembilang sementara >> ', pembilangSementara);
+        console.log('pembilang >> ', pembilang);
+
+        if (ssI) {
+            ssI[1] = pembilang;
+            result[dataIndex(['saudara_saudari_tiri_seibu'], 'nama', result)].bagian_terhitung = ssI.join('/');
+            result[dataIndex(['saudara_saudari_tiri_seibu'], 'nama', result)].updateFunds(ssI[0] * funds / pembilang);
+        }
+        if (sI) {
+            sI[1] = pembilang;
+            result[dataIndex(['suami', 'istri'], 'nama', result)].bagian_terhitung = sI.join('/');
+            result[dataIndex(['suami', 'istri'], 'nama', result)].updateFunds(sI[0] * funds / pembilang);
+        }
+        if (iN) {
+            iN[1] = pembilang;
+            result[dataIndex(['ibu', 'nenek', 'ibu_kakek'], 'nama', result)].bagian_terhitung = iN.join('/');
+            result[dataIndex(['ibu', 'nenek', 'ibu_kakek'], 'nama', result)].updateFunds(iN[0] * funds / pembilang);
+        }
+        if (sK) {
+            sK[1] = pembilang;
+            result[dataIndex(['saudari_kandung'], 'nama', result)].bagian_terhitung = sK.join('/');
+            result[dataIndex(['saudari_kandung'], 'nama', result)].updateFunds(sK[0] * funds / pembilang);
+        }
+
+        let sisaPenyebut = pembilang - penyebut;
+        let lastFunds = sisaPenyebut * funds / pembilang;
+        let name;
+        if (saudara_kandung > 0) name = ['saudara_kandung', 'saudari_kandung'];
+        else name = ['saudara_tiri_seayah', 'saudari_seayah'];
+        if (saudari_seayah > 0 || (saudara_tiri_seayah < 1 && saudari_kandung > 0)) {
+            result.unshift(new Beneficiary(name[1], `1/2 bagian ${name[0]}`, body[name[1]]));
+            result.unshift(new Beneficiary(name[0], `2 kali lipat ${name[1]}`, body[name[0]]));
+            let pembilangBaru = (body[name[0]] * 2) + body[name[1]];
+            result[dataIndex([name[0]], 'nama', result)].updateCountPart(`${body[name[0]] * 2}/${pembilangBaru} dari sisa ${sisaPenyebut}/${pembilang}`);
+            result[dataIndex([name[0]], 'nama', result)].updateFunds((body[name[0]] * 2) * lastFunds / pembilangBaru);
+            result[dataIndex([name[1]], 'nama', result)].updateCountPart(`${body[name[1]]}/${pembilangBaru} dari sisa ${sisaPenyebut}/${pembilang}`);
+            result[dataIndex([name[1]], 'nama', result)].updateFunds(body[name[1]] * lastFunds / pembilangBaru);
+        }
+        else {
+            result.unshift(new Beneficiary(name[0], 'Sisa pembagian seluruh harta', body[name[0]]));
+            result[dataIndex([name[0]], 'nama', result)].updateCountPart(`${sisaPenyebut}/${pembilang}`);
+            result[dataIndex([name[0]], 'nama', result)].updateFunds(lastFunds);
+        }
+
+        return result;
+
+    }
+
+    // =======================================
+    //           AHLI WARIS LAINNYA
+    // =======================================
+    static haveAnother(body, funds) {
+        const {
+            anak_laki_laki_saudara_kandung, anak_laki_laki_saudara_tiri_seayah, saudara_kandung_ayah, saudara_tiri_seayah_ayah,
+            anak_laki_laki_saudara_kandung_ayah, anak_laki_laki_saudara_tiri_seayah_ayah, saudari_kandung, saudari_seayah,
+            suami, istri, ibu, nenek, ibu_kakek, saudara_saudari_tiri_seibu, pria_wanita_yang_memerdekakan_budak
+        } = body;
+        let result = [];
+
+        if (saudara_saudari_tiri_seibu > 0) {
+            if (saudara_saudari_tiri_seibu > 1) result.push(new Beneficiary('saudara_saudari_tiri_seibu', '1/3', saudara_saudari_tiri_seibu));
+            else result.push(new Beneficiary('saudara_saudari_tiri_seibu', '1/6', saudara_saudari_tiri_seibu))
+        }
+
+        if (suami > 0) result.push(new Beneficiary('suami', '1/2', 1));
+        else if (istri > 0) result.push(new Beneficiary('istri', '1/4', istri));
+
+        if (ibu > 0) {
+            if (saudari_kandung < 1 && saudari_seayah < 1) result.push(new Beneficiary('ibu', '1/3', 1));
+            else result.push(new Beneficiary('ibu', '1/6', 1));
+        } 
+        else if (nenek > 0) result.push(new Beneficiary('nenek', '1/6', 1));
+        else if (ibu_kakek > 0) result.push(new Beneficiary('ibu_kakek', '1/6', 1));
+
+        if (saudari_kandung > 0) {
+            if (saudari_kandung > 1) result.push(new Beneficiary('saudari_kandung', '2/3', saudari_kandung));
+            else result.push(new Beneficiary('saudari_kandung', '1/2', 1))
+        }
+        else if (saudari_seayah > 0) {
+            if (saudari_seayah > 1) result.push(new Beneficiary('saudari_seayah', '2/3', saudari_seayah));
+            else result.push(new Beneficiary('saudari_seayah', '1/2', 1))
+        }
+
+        let ssI, sI, iN, sKA;
+        let penyebut = 0;
+        let pembilangSementara = 1;
+        let findKPK = [];
+        for (let i in result) {
+            if (result[i].nama === 'suami' || result[i].nama === 'istri') {
+                sI = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+sI[1]);
+                pembilangSementara *= +sI[1];
+            }
+            else if (result[i].nama === 'ibu' || result[i].nama === 'nenek' || result[i].nama === 'ibu_kakek') {
+                iN = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+iN[1]);
+                pembilangSementara *= +iN[1];
+            }
+            else if (result[i].nama === 'saudari_kandung' || result[i].nama === 'saudari_seayah') {
+                sKA = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+sKA[1]);
+                pembilangSementara *= +sKA[1];
+            }
+            else if (result[i].nama === 'saudara_saudari_tiri_seibu') {
+                ssI = result[i].bagian_hukum_waris.split('/');
+                findKPK.push(+ssI[1]);
+                pembilangSementara *= +ssI[1];
+            }
+        }
+
+        if (findKPK.length > 0) pembilangSementara = kpk(findKPK, pembilangSementara);
+
+        if (ssI) {
+            ssI[0] = pembilangSementara / +ssI[1] * ssI[0];
+            penyebut += ssI[0];
+        }
+        if (sI) {
+            sI[0] = pembilangSementara / +sI[1] * sI[0];
+            penyebut += sI[0];
+        }
+        if (iN) {
+            iN[0] = pembilangSementara / +iN[1] * iN[0];
+            penyebut += iN[0];
+        }
+        if (sKA) {
+            sKA[0] = pembilangSementara / +sKA[1] * sKA[0];
+            penyebut += sKA[0];
+        }
+
+        let pembilang;
+
+        penyebut > pembilangSementara ? pembilang = penyebut : pembilang = pembilangSementara;
+
+        console.log('penyebut >> ', penyebut);
+        console.log('pembilang sementara >> ', pembilangSementara);
+        console.log('pembilang >> ', pembilang);
+
+        if (ssI) {
+            ssI[1] = pembilang;
+            result[dataIndex(['saudara_saudari_tiri_seibu'], 'nama', result)].bagian_terhitung = ssI.join('/');
+            result[dataIndex(['saudara_saudari_tiri_seibu'], 'nama', result)].updateFunds(ssI[0] * funds / pembilang);
+        }
+        if (sI) {
+            sI[1] = pembilang;
+            result[dataIndex(['suami', 'istri'], 'nama', result)].bagian_terhitung = sI.join('/');
+            result[dataIndex(['suami', 'istri'], 'nama', result)].updateFunds(sI[0] * funds / pembilang);
+        }
+        if (iN) {
+            iN[1] = pembilang;
+            result[dataIndex(['ibu', 'nenek', 'ibu_kakek'], 'nama', result)].bagian_terhitung = iN.join('/');
+            result[dataIndex(['ibu', 'nenek', 'ibu_kakek'], 'nama', result)].updateFunds(iN[0] * funds / pembilang);
+        }
+        if (sKA) {
+            sKA[1] = pembilang;
+            result[dataIndex(['saudari_kandung', 'saudari_seayah'], 'nama', result)].bagian_terhitung = sKA.join('/');
+            result[dataIndex(['saudari_kandung', 'saudari_seayah'], 'nama', result)].updateFunds(sKA[0] * funds / pembilang);
+        }
+
+        let sisaPenyebut = pembilang - penyebut;
+        let lastFunds = sisaPenyebut * funds / pembilang;
+        let name;
+        if (anak_laki_laki_saudara_kandung > 0) name = 'anak_laki_laki_saudara_kandung';
+        else if (anak_laki_laki_saudara_tiri_seayah > 0) name = 'anak_laki_laki_saudara_tiri_seayah';
+        else if (saudara_kandung_ayah > 0) name = 'saudara_kandung_ayah';
+        else if (saudara_tiri_seayah_ayah > 0) name = 'saudara_tiri_seayah_ayah';
+        else if (anak_laki_laki_saudara_kandung_ayah > 0) name = 'anak_laki_laki_saudara_kandung_ayah';
+        else if (anak_laki_laki_saudara_tiri_seayah_ayah > 0) name = 'anak_laki_laki_saudara_tiri_seayah_ayah';
+        else if (pria_wanita_yang_memerdekakan_budak > 0) name = 'pria_wanita_yang_memerdekakan_budak'; 
+        else name = 'dzawil_arhaam';
+        result.unshift(new Beneficiary(name, 'Sisa pembagian seluruh harta', body[name]));
+        result[dataIndex([name], 'nama', result)].bagian_terhitung = `${sisaPenyebut}/${pembilang}`;
+        result[dataIndex([name], 'nama', result)].updateFunds(lastFunds);
+
+        return result;
+    }
 }
 
 module.exports = Ahli_Waris;

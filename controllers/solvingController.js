@@ -2,7 +2,7 @@ const SolveModel = require('../Models/solvingModel');
 
 class Controller {
     static getFormat( req, res ) {
-        res.status(200).json({ ahli_waris: new SolveModel() });
+        res.status(200).json({ ahli_waris: new SolveModel(), total_harta: 0 });
     }
 
     static solving( req, res ) {
