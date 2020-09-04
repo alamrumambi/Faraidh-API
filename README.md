@@ -4,7 +4,7 @@ Faraidh-api is a rest api for determining inheritance rights in accordance with 
 
 Basically the properties used in this api use Indonesian language.
 
-There are still many shortcomings in this api, but for the accuracy of determining inheritance rights, the author has tried to make the calculation results in accordance with applicable Islamic law. The author has also tested several case problems to compare whether the results of this fire calculation match the results of calculations carried out by experts.
+There are still many shortcomings in this api, but for the accuracy of determining inheritance rights, the author has tried to make the calculation results in accordance with applicable Islamic law. The author has also tested several case problems to compare whether the results of this api calculation match the results of calculations carried out by experts.
 
 If a calculation error is found in several cases, the authors hope that the user can immediately correct and inform the author to be corrected immediately so that the calculation results from this api are not misleading.
 
