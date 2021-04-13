@@ -8,7 +8,7 @@ There are still many shortcomings in this api, but for the accuracy of determini
 
 If a calculation error is found in several cases, the authors hope that the user can immediately correct and inform the author to be corrected immediately so that the calculation results from this api are not misleading.
 
-This is the schema flow chart used to build this api ![faraidh_schema](./image/faraidh_schema.png)
+This is the schema flow chart used to build this api ![faraidh_schema](./public/image/faraidh_schema.png)
 
 List of available endpoints:
 ​
